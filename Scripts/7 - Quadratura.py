@@ -54,7 +54,7 @@ def double_integrate(f, inferior_x, superior_x, inferior_y, superior_y, nx, ny):
 def euler_method(f, x0, xf, y0, h=0.1):
     def implementation(step):
         x, y = x0, y0
-        while x <= xf:
+        while x < xf - 0.00001:
             x, y = x + step, y + step * f(x, y)
         return y
 
@@ -64,7 +64,7 @@ def euler_method(f, x0, xf, y0, h=0.1):
     qc = (sl - s) / (sll - sl)
     e = sll - sl
 
-    return s, qc, e
+    return s, e
 
 
 def f2(x):
