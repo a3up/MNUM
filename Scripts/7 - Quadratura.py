@@ -1,4 +1,4 @@
-from math import sin, pi
+from math import sin, pi, exp
 
 
 def integrate(f, inferior, superior, n=4, method=0, tolerance=0.1):
@@ -23,20 +23,62 @@ def integrate(f, inferior, superior, n=4, method=0, tolerance=0.1):
     implementation = simpson if method else trapezoidal
     while True:
         res = implementation(n)
+        break
         res1 = implementation(n * 2)
         res2 = implementation(n * 4)
-        if abs(2 ** order - (res1 - res)/(res2 - res1)) > tolerance:
+        if abs(2 ** order - (res1 - res) / (res2 - res1)) > tolerance:
             n *= 2
         else:
             break
-
     return res
 
 
+def double_integrate(f, inferior_x, superior_x, inferior_y, superior_y, nx, ny):
+    def simpson(div_x, div_y):
+        if nx != 2 or ny != 2:
+            raise ValueError
+        hx = (superior_x - inferior_x) / div_x
+        hy = (superior_y - inferior_y) / div_y
+        vertices = sum([f(x, y) for x in [inferior_x, superior_x] for y in [inferior_y, superior_y]])
+        intermediary = sum([f(inferior_x + hx, y) for y in [inferior_y, superior_y]])
+        intermediary += sum([f(x, inferior_y + hy) for x in [inferior_x, superior_x]])
+        center = f(inferior_x + hx, inferior_y + hy)
+        ret = vertices + 4 * intermediary + 16 * center;
+        ret *= (hx * hy) / 9
+        return ret
+    res = simpson(nx, ny)
+    return res
+
+
+def euler_method():
+    pass
+
+def f2(x):
+    if x == 1:
+        return 5
+    elif x == 2:
+        return 6
+    elif x == 3:
+        return 5.5
+    elif x == 4:
+        return 7
+    elif x == 5:
+        return 7.4
+    elif x == 6:
+        return 8.5
+    elif x == 7:
+        return 8
+    elif x == 8:
+        return 6
+    elif x == 9:
+        return 7
+    elif x == 10:
+        return 5
+
+
 if __name__ == '__main__':
-    function = lambda x: sin(x) / x ** 2
-    divisions = 4
+    function = lambda x, y: exp(y-x)
     rounding = 6
 
-    print(round(integrate(function, pi / 2, pi), rounding))
-    print(round(integrate(function, pi / 2, pi, method=1), rounding))
+    print(round(double_integrate(function, 0, 0.5, 0, 0.5, nx=2, ny=2), rounding))
+    #print(round(integrate(function, 1, 10, n=10, method=1), rounding))
