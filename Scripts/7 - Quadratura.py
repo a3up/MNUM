@@ -67,6 +67,22 @@ def euler_method(f, x0, xf, y0, h=0.1):
     return s, e
 
 
+def rk2(f, x0, xf, y0, h=0.1):
+    def implementation(step):
+        x, y = x0, y0
+        while x < xf - 0.001:
+            x, y = x + step, y + step*f(x + step/2, y + step/2 * f(x, y))
+        return y
+
+    s = implementation(h)
+    sl = implementation(h / 2)
+    sll = implementation(h / 4)
+    qc = (sl - s) / (sll - sl)
+    e = (sll - sl)/3
+
+    return s, e
+
+
 def f2(x):
     if x == 1:
         return 5
@@ -93,4 +109,4 @@ def f2(x):
 if __name__ == '__main__':
     function = lambda x, y: x ** 2 + y ** 2
 
-    print(euler_method(function, 0, 1.4, 0))
+    print(rk2(function, 0, 1.4, 0))
