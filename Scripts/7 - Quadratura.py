@@ -46,12 +46,26 @@ def double_integrate(f, inferior_x, superior_x, inferior_y, superior_y, nx, ny):
         ret = vertices + 4 * intermediary + 16 * center;
         ret *= (hx * hy) / 9
         return ret
+
     res = simpson(nx, ny)
     return res
 
 
-def euler_method():
-    pass
+def euler_method(f, x0, xf, y0, h=0.1):
+    def implementation(step):
+        x, y = x0, y0
+        while x <= xf:
+            x, y = x + step, y + step * f(x, y)
+        return y
+
+    s = implementation(h)
+    sl = implementation(h/2)
+    sll = implementation(h/4)
+    qc = (sl - s) / (sll - sl)
+    e = sll - sl
+
+    return s, qc, e
+
 
 def f2(x):
     if x == 1:
@@ -77,8 +91,6 @@ def f2(x):
 
 
 if __name__ == '__main__':
-    function = lambda x, y: exp(y-x)
-    rounding = 6
+    function = lambda x, y: x ** 2 + y ** 2
 
-    print(round(double_integrate(function, 0, 0.5, 0, 0.5, nx=2, ny=2), rounding))
-    #print(round(integrate(function, 1, 10, n=10, method=1), rounding))
+    print(euler_method(function, 0, 1.4, 0))
